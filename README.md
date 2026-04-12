@@ -118,7 +118,7 @@ make -C boilerplate ci
 **Caption:** Two containers (`alpha` and `beta`) running concurrently under a single supervisor process. The supervisor stays alive while both containers execute.
 
 > Run `sudo ./engine start alpha ./rootfs-alpha /bin/ls` and `sudo ./engine start beta ./rootfs-beta /bin/ls` simultaneously, then observe the supervisor terminal confirming both were started with distinct PIDs.
-
+![ps output](screenshots/t1_1.png)
 ---
 
 ### Screenshot 2 — Metadata Tracking (`ps`)
@@ -126,7 +126,7 @@ make -C boilerplate ci
 **Caption:** Output of `sudo ./engine ps` showing both containers with their host PIDs, states, soft limits, and hard limits tracked in supervisor metadata.
 
 > The table shows ID, PID, STATE, SOFT(MiB), and HARD(MiB) columns for each container.
-
+![ps output](screenshots/t1_2.png)
 ---
 
 ### Screenshot 3 — Bounded-Buffer Logging
@@ -134,6 +134,8 @@ make -C boilerplate ci
 **Caption:** Contents of `logs/alpha.log` written through the producer-consumer logging pipeline. The container's stdout was captured via pipe, passed through the ring buffer, and flushed to disk by the consumer thread.
 
 > Run `sudo ./engine logs alpha` after a container exits. The log file shows the container's output.
+![ps output](screenshots/t3_1.png)
+![ps output](screenshots/t3_2.png)
 
 ---
 
@@ -142,7 +144,7 @@ make -C boilerplate ci
 **Caption:** A `stop` command issued from a CLI client process connecting to the supervisor via UNIX domain socket at `/tmp/mini_runtime.sock`. The supervisor responds with the result and updates container state.
 
 > Run `sudo ./engine stop alpha` while the supervisor is running in Terminal 1. Both terminals show the exchange.
-
+![ps output](screenshots/t2_1.png)
 ---
 
 ### Screenshot 5 — Soft-Limit Warning
@@ -150,28 +152,22 @@ make -C boilerplate ci
 **Caption:** `dmesg` output showing the kernel module emitting a `SOFT LIMIT` warning when the `memory_hog` container exceeded its configured soft memory limit of 10 MiB.
 
 > Run `sudo ./engine start alpha ./rootfs-alpha /memory_hog --soft-mib 10 --hard-mib 20` and watch `dmesg | tail -10`.
-
+![ps output](screenshots/t4_2.png)
 ---
 
-### Screenshot 6 — Hard-Limit Enforcement
-
-**Caption:** `dmesg` showing the kernel module sending `SIGKILL` to the container after it exceeded its hard limit of 20 MiB. `sudo ./engine ps` shows container state as `killed`.
-
-> The `kill_process()` kernel helper fires, logs the event to dmesg, and the supervisor's `SIGCHLD` handler updates the container state to `killed` because `exit_signal == SIGKILL` and `stop_requested` was not set.
-
----
-
-### Screenshot 7 — Scheduling Experiment
+### Screenshot 6 — Scheduling Experiment
 
 **Caption:** Two CPU-bound containers running with `--nice 0` and `--nice 10` respectively. `top` output shows the nice=0 container consuming significantly more CPU share than the nice=10 container under CFS.
 
 > See Scheduler Experiment Results section below for raw data.
-
+![ps output](screenshots/t5_3.png)
+![ps output](screenshots/t5_4.png)
 ---
 
-### Screenshot 8 — Clean Teardown
+### Screenshot 7 — Clean Teardown
 
 **Caption:** After sending `SIGINT` to the supervisor, all containers are reaped, logging threads join cleanly, and `ps aux | grep defunct` shows zero zombie processes. The socket file `/tmp/mini_runtime.sock` is removed.
+![ps output](screenshots/t6_1.png)
 
 ---
 
