@@ -9,7 +9,7 @@ A lightweight Linux container runtime in C with a long-running supervisor, kerne
 | Name | SRN |
 |------|-----|
 | Vikrant Acharyya | PES2UG24CS587 |
-| Shashi  | PES2UG24CS568 |
+| Shashidharan VS  | PES2UG24CS568 |
 
 ---
 
